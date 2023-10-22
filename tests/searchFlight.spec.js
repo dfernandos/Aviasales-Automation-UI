@@ -1,36 +1,28 @@
-// @ts-check
-const { test, expect } = require('@playwright/test');
+const { test, expect, beforeEach } = require('@playwright/test');
 import { HomePageObject } from '../page-objects/HomePageObject';
 
-
 test.describe("Aviasales search for Flights", () => {
+  let page, homepageObject; 
+  test.beforeEach(async ({ browser }) => {
+    page = await browser.newPage();
+    homepageObject = new HomePageObject(page);
+    await homepageObject.visit();
+  });
 
+  test.only('Search for a flight successfully', async () => {
 
-test.only('Search for a flight sucessfully', async ({ page }) => {
+    const origin = "John F. Kennedy International Airport";
+    const destination = "Berlin";
+    const departureDate = "Mon Oct 30 2023";
+    const originalURL = page.url();
 
-  const homepageObject = new HomePageObject(page);
-  await homepageObject.visit();
-  
+    homepageObject.searchForFlights(origin, destination, departureDate);
 
-const origin = "John F. Kennedy International Airport";
-const destination = "Berlin"
-const departureDate = "Mon Oct 30 2023"
-
-const originalURL = page.url();
-
-  homepageObject.searchForFlights(origin, destination, departureDate);
-
-  await page.waitForTimeout(5000);
-
-  // Capture the URL of the new page
-  const newURL = page.url();
-
-  // Check if a new page has opened by comparing URLs
-  expect(originalURL).not.toEqual(newURL);
-//   await page.pause();
-  homepageObject.validadeInformationInTheNewSearchPageasync(origin, destination, "Mon, October 30")
-  await page.pause();
-  //await page.pause();
-});
+    await page.waitForTimeout(7000);
+    const newURL = page.url();
+    expect(originalURL).not.toEqual(newURL);
+    homepageObject.validadeInformationInTheNewSearchPageasync(origin, destination, "Mon, October 30");
+    await page.pause();
+  });
 
 });

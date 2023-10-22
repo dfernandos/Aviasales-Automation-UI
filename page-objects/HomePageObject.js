@@ -1,5 +1,3 @@
-import { timeout } from '../playwright.config';
-
 const { expect } = require('@playwright/test');
 
 export class HomePageObject{
@@ -39,12 +37,14 @@ export class HomePageObject{
         await this.destinationInputField.waitFor();
         await this.destinationInputField.click();
         await this.destinationInputField.fill(destination);
-        await this.page.waitForTimeout(3000);
 
         await this.departureDateInputField.waitFor();
         await this.departureDateInputField.click();
 
-        await this.page.getByLabel(departureDate).getByText('30').click();
+        const day = departureDate.substr(8, 2);
+
+        await this.page.getByLabel(departureDate).getByText(day).waitFor();
+        await this.page.getByLabel(departureDate).getByText(day).click();
 
         await this.departureDateInputField.waitFor();
 
@@ -58,12 +58,12 @@ export class HomePageObject{
     }
 
     validadeInformationInTheNewSearchPageasync = async(origin, destination, selectedDate) => {
-
         await expect(this.originInputField).toHaveValue(origin);
+        await this.destinationInputField.waitFor();
         await expect(this.destinationInputField).toHaveValue(destination);
         await this.page.waitForTimeout(10000);
         const departureDateSelected = await this.page.locator('[data-test-id="departure-date-input"]').getAttribute('value')
-        await expect(selectedDate).toBe(departureDateSelected);
+        expect(selectedDate).toBe(departureDateSelected);
         await expect(this.passengerText).toBeVisible();
 
     }
